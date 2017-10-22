@@ -1,20 +1,8 @@
 <?php acf_form_head(); ?>
 <?php get_header();
 
-  /* Globals */
-  $current_user    = wp_get_current_user();
-
-  /* Times */
-  $this_week       = date( 'W', current_time( 'timestamp', 1 ) );
-  $this_year       = date( 'Y', current_time( 'timestamp', 1 ) );
-  $start_week      = strtotime( "Last Monday" );
-  $start_week_date = date( 'l jS F Y', $start_week );
-
-  $end_week        = strtotime( "This Sunday" );
-  $end_week_date   = date( 'l jS F Y', $end_week );
-
-  var_dump( $this_week, $start_week_date, $end_week_date );
-?>
+// Current user
+$current_user    = wp_get_current_user(); ?>
 
 <header class="header">
   <strong><?php echo date( 'l jS F Y', current_time( 'timestamp', 1 ) ); ?></strong>
@@ -40,8 +28,7 @@
       ],
       'new_post' => [
         'post_type'   => 'post',
-        'post_status' => 'publish',
-        'post_title'  => $this_week . '_' . $this_year
+        'post_status' => 'publish'
       ],
       'submit_value' => 'Save week'
     ]);

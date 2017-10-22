@@ -9,13 +9,16 @@ class track_function {
   }
 
   static function scripts() {
-    // Regoster scripts
-    wp_register_script( 'prefix', self::scry( '/prefix.js' ), [ 'jquery' ], '', true );
-    wp_register_script( 'tracking_script', self::scry( '/script.js' ), [ 'jquery' ], '', true );
-    wp_register_script( 'time', self::scry( '/time.js' ), [ 'jquery' ], '', true );
+    wp_register_style( 'styles', self::scry( '/style.css' ), '', '', false );
+    wp_enqueue_style( 'styles') ;
+
+    // Register scripts
+    wp_register_script( 'prefix', self::scry( '/assets/prefix.js' ), [ 'jquery' ], '', true );
+    wp_register_script( 'tracking_script', self::scry( '/assets/script.js' ), [ 'jquery' ], '', true );
+    wp_register_script( 'time', self::scry( '/assets/time.js' ), [ 'jquery' ], '', true );
 
     // Use scripts
-    wp_enqueue_script('jquery');
+    wp_enqueue_script( 'jquery' );
     wp_enqueue_script( 'prefix' );
     wp_enqueue_script( 'tracking_script' );
     wp_enqueue_script( 'time' );
