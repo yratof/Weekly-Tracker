@@ -8,7 +8,7 @@ $shadow: #0044ff;
 body {
   background-color: #f2f2f2;
   font-size: 18px;
-  line-height: 2;
+  line-height: 1.4;
   padding: 1rem;
 }
 
@@ -66,23 +66,19 @@ header.meta {
     font-size: 1.5rem;
     text-align: center;
     small{
+      font-size: 0.9rem;
+      line-height: 1.4;
       display: block;
       padding: 0;
-      line-height: 1;
       font-weight: 400;
     }
   }
 
   a.prev,
   a.next {
-    border-radius: 3px;
-    padding: 0;
     color: white;
     text-align: center;
     background-color: $shadow;
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 1rem;
   }
 }
 
@@ -105,10 +101,9 @@ table {
 
   th small {
     font-weight: 400;
-    padding-left: 0.25rem;
-    &::before{ content: "["; }
-    &::after{ content: "]"; }
+    border-top: 1px solid;
   }
+
   tfoot th {
     padding-top: 2rem;
   }
@@ -150,10 +145,12 @@ th:first-child{
 }
 
 .view-all,
-[type="submit"] {
+[type="submit"],
+a.prev,
+a.next {
   font-weight: 400;
   border-radius: 3px;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
   color: white;
   background-color: $highlight;
   border: none;
@@ -172,9 +169,22 @@ input[type="submit"] {
   line-height: 2;
 }
 
+tbody th{
+  text-transform: capitalize;
+}
+
+th.day {
+  text-align: left;
+  line-height: 1.4;
+  small {
+    display: block;
+  }
+}
+
 th.summary{
   text-align: right;
 }
+
 
 footer strong {
   &.hours-this-week{ padding-right: 1rem; }
@@ -188,6 +198,31 @@ footer strong {
   }
 }
 
+// Labels
+th.overtime,
+th.payday,
+th.lastfriday,
+th.today {
+  position: relative;
+  &::before {
+    content: attr( data-notice );
+    background-color: red;
+    color: white;
+    white-space: nowrap;
+    padding: 0.25rem;
+    border-radius: 2px;
+    font-size: 0.6rem;
+    font-weight: 400;
+    position: absolute;
+    top: -1rem;
+    left: 0.5rem;
+  }
+}
+
+th.today::before      { background-color: #4caf50; }
+th.lastfriday::before { background-color: #f44336; }
+th.payday::before     { background-color: #3f51b5; }
+th.overtime::before   { background-color: #ff9800; }
 
 // Possible background
 body{

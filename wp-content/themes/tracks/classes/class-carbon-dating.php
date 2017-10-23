@@ -85,7 +85,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
             $d = 0;
             // Loop through the days of the week to get th cells
             foreach ( $weekdays as $weekday ) { ?>
-              <th data-day="<?= $weekday ?>"    data-date="<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?>" class="day"><?= $weekday ?><br />
+              <th data-day="<?= $weekday ?>" data-date="<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?>" class="day"><?= $weekday ?>
                 <small><?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?></small>
               </th>
             <?php
@@ -137,8 +137,9 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
   This will highlight specific dates to help show wtf is going on
   */
   jQuery( function( $ ){
-    var today = '<?php echo Carbon::parse( $query['date'] )->format('l'); ?>';
-    var pay_cutoff = '<?php echo $cutoffPay; ?>';
+    var today       = '<?php echo Carbon::today()->toFormattedDateString(); ?>';
+    var lastfriday  = '<?php echo $lastFriday ?>';
+    var pay_cutoff  = '<?php echo $cutoffPay; ?>';
     var over_cutoff = '<?php echo $cutoffOvertime ?>';
     // console.log( 'Today is ' + today );
 
@@ -146,21 +147,31 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
     $( 'th.day' ).each( function() {
 
       // If today is the date, we highlight
-      if ( today == $(this).data( 'day' ) ) {
+      if ( today == $(this).data( 'date' ) ) {
         $( this ).addClass( 'today' );
-        $( this ).css( 'font-weight', 'bold' );
+        $( this ).attr( 'data-notice', 'Today' );
+        $( this ).css( 'color', '#4caf50' );
       }
 
       // If PAY CUTTOFF is shown
       if ( pay_cutoff == $(this).data( 'date' ) ) {
         $( this ).addClass( 'payday' );
+        $( this ).attr( 'data-notice', 'Payday' );
         $( this ).css( 'color', 'blue' );
       }
 
       // If OVERTIME CUTTOFF is shown
       if ( over_cutoff == $(this).data( 'date' ) ) {
         $( this ).addClass( 'overtime' );
-        $( this ).css( 'color', 'purple' );
+        $( this ).attr( 'data-notice', 'Overtime Paid' );
+        $( this ).css( 'color', 'red' );
+      }
+
+      // Last friday, regardless
+      if ( lastfriday == $(this).data( 'date' ) ) {
+        $( this ).addClass( 'lastfriday' );
+        $( this ).attr( 'data-notice', 'Last Friday' );
+        $( this ).css( 'color', 'red' );
       }
     });
   } );
