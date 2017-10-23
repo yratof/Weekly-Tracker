@@ -6,6 +6,14 @@ class track_function {
 
   static function setup() {
     add_action( 'wp_enqueue_scripts', __CLASS__ . '::scripts', 10 );
+
+    // Show us what the form posts
+    if ( $_POST ) {
+      print_r( '<pre>' );
+      print_r( $_POST );
+      print_r( '</pre>' );
+      exit;
+    }
   }
 
   static function scripts() {

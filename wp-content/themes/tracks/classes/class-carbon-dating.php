@@ -1,56 +1,197 @@
 <?php
+
+
+/**
+ * 39 Hours per weeks
+ * 9 Hour days - 30 minutes lunch
+ * £11.56 per hour for Overtime
+ * £7.76 * 1.5 = Overtime cost
+ * How overtime is paid.
+ * Paid on last Friday of the Month. Call it $lastFriday
+ * The paid amount is 4 weeks from $lastFriday - 1 week before $lastFriday
+ * Overtime is calculated from two weeks before the $lastFriday to two weeks before the $lastFriday
+ * Possible no internet. Use Service worker to store all information and then oush when back on the internet
+ *
+ */
+
 require 'vendor/autoload.php';
+
 use Carbon\Carbon;
 
 // New instance of 'NOW'!
 new Carbon( 'Europe/Oslo' );
 
-// Today
-$today                   = Carbon::today()->toFormattedDateString();
+// Parse the URL to get the page we're on
+$the_url = "$_SERVER[REQUEST_URI]";
+$parts   = parse_url( $the_url );
+if ( isset( $parts['query'] ) ) {
+  parse_str( $parts['query'], $query );
+  // A quick reminder of what the day is:
+  echo '<script>console.log( "' . $query['date'] . '" );</script>';
+} else {
+  // die ( 'We need a date in the url' );
+  $query['date'] = Carbon::today()->startOfWeek()->toFormattedDateString();
+}
 
-// Start of the week
-$start                   = Carbon::today()->startOfWeek()->toFormattedDateString();
+// Weekly dates & labels for pagination
+$lastWeek       = Carbon::parse( $query['date'] )->subDays( 7 )->format('Y-m-d');
+$lastWeek_label = Carbon::parse( $query['date'] )->subDays( 7 )->format('W');
+$nextWeek       = Carbon::parse( $query['date'] )->addDays( 7 )->format('Y-m-d');
+$nextWeek_label = Carbon::parse( $query['date'] )->addDays( 7 )->format('W');
 
-// End of the week
-$end                     = Carbon::today()->endOfWeek()->toFormattedDateString();
+// Debug information & general information
+$today                   = Carbon::parse( $query['date'] )->toFormattedDateString();
+$start                   = Carbon::parse( $query['date'] )->startOfWeek()->toFormattedDateString();
+$end                     = Carbon::parse( $query['date'] )->endOfWeek()->toFormattedDateString();
+$lastFriday              = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->toFormattedDateString();
+$cutoffPay               = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+$nextCutoffPay           = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+$cutoffOvertime          = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+$nextCutoffOvertime      = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+$cutoffOvertime_diff     = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
+$nextCutoffOvertime_diff = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
 
-// Pay day this month
-$lastFriday              = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->toFormattedDateString();
+/* Weekdays */
+$weekdays = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
 
-// Cutoff for pay this month
-$cutoffPay               = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
-$nextCutoffPay           = Carbon::today()->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+/* States ( Start, Finish etc ) */
+$states = [ 'start', 'finish', 'total', 'overtime' ];
+?>
 
-// Cutoff for overtime this month
-$cutoffOvertime          = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
-$nextCutoffOvertime      = Carbon::today()->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+<form method="POST" class="track">
 
-$cutoffOvertime_diff     = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
-$nextCutoffOvertime_diff = Carbon::today()->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
+    <!-- Navigation-->
+    <header class="meta">
+      <a href="/?date=<?= $lastWeek; ?>" class="prev">&lt; Week <?= $lastWeek_label ?></a>
+      <strong class="week">
+        <?= Carbon::parse( $query['date'] )->startOfWeek()->format('jS F Y') . '—' . Carbon::parse( $query['date'] )->endOfWeek()->format('jS F Y') ?>
+        <small>
+          <?php
+          echo 'Pay day: ' . $lastFriday . ' – ';
+          echo 'Pay range: ' . $cutoffPay . ' - ' . $nextCutoffPay . '<br>';
+          echo 'Overtime range: ' . $cutoffOvertime . ' – ' . $nextCutoffOvertime . '</em>';
+          ?>
+        </small>
+      </strong>
+      <a href="/?date=<?= $nextWeek ?>" class="next">Week <?= $nextWeek_label ?> &gt;</a>
+    </header>
 
+    <table>
+      <thead>
+        <tr>
+          <!-- Top left blank cell -->
+          <th class="day"></th>
+          <?php
+            $d = 0;
+            // Loop through the days of the week to get th cells
+            foreach ( $weekdays as $weekday ) { ?>
+              <th data-day="<?= $weekday ?>"    data-date="<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?>" class="day"><?= $weekday ?><br />
+                <small><?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?></small>
+              </th>
+            <?php
+            $d++;
+            } ?>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <!-- Buttons that help do things-->
+          <th colspan="4"><a class="view-all" href="#view">View month</a><a class="view-all" href="#print">Print month</a></th>
+          <th class="summary" colspan="4">
+            <input class="view-all" type="submit" value="Save"/>
+          </th>
+        </tr>
+      </tfoot>
+      <tbody>
+        <?php
+        // Loop through all the states to get inputs
+        foreach ( $states as $state ) { ?>
+          <tr class="<?= $state; ?>">
+            <th><?= $state; ?></th>
+            <?php
+            // Set day 1 as 0 days added
+            $d = 0;
+            // Loop through the days of the week for cells
+            foreach ( $weekdays as $weekday ) { ?>
+              <td>
+                <input name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
+              </td>
+            <?php
+            // Increment the addDays function
+            $d++;
+            } ?>
+          </tr>
+        <?php
+        }
+        ?>
+
+      </tbody>
+    </table>
+  </form>
+
+<hr />
+
+<script>
+  /*
+  DO A LITTLE DANCE!
+  This will highlight specific dates to help show wtf is going on
+  */
+  jQuery( function( $ ){
+    var today = '<?php echo Carbon::parse( $query['date'] )->format('l'); ?>';
+    var pay_cutoff = '<?php echo $cutoffPay; ?>';
+    var over_cutoff = '<?php echo $cutoffOvertime ?>';
+    // console.log( 'Today is ' + today );
+
+    // Loop the days
+    $( 'th.day' ).each( function() {
+
+      // If today is the date, we highlight
+      if ( today == $(this).data( 'day' ) ) {
+        $( this ).addClass( 'today' );
+        $( this ).css( 'font-weight', 'bold' );
+      }
+
+      // If PAY CUTTOFF is shown
+      if ( pay_cutoff == $(this).data( 'date' ) ) {
+        $( this ).addClass( 'payday' );
+        $( this ).css( 'color', 'blue' );
+      }
+
+      // If OVERTIME CUTTOFF is shown
+      if ( over_cutoff == $(this).data( 'date' ) ) {
+        $( this ).addClass( 'overtime' );
+        $( this ).css( 'color', 'purple' );
+      }
+    });
+  } );
+</script>
+
+<?php
 
 // What is 'Now'
-echo '<strong>Now: </strong>' . $today . '<br />';
-echo '<strong>Start:</strong> ' . $start . '<br />';
-echo '<strong>End: </strong>' . $end . '<br />';
+echo '<strong>Now: </strong>' . $today . ' | ';
+echo '<strong>Start:</strong> ' . $start . ' | ';
+echo '<strong>End: </strong>' . $end;
 
 echo '<hr />';
 
-echo '<strong>Last friday: </strong>' . $lastFriday . '<br />';
+echo '<strong>Last friday: </strong>' . $lastFriday;
 
 echo '<hr />';
 
-echo '<strong>Cuttoff pay: </strong>' . $cutoffPay . '<br />';
-echo '<strong>Next Cuttoff pay: </strong>' . $nextCutoffPay . '<br />';
+echo '<strong>Cuttoff pay: </strong>' . $cutoffPay . ' | ';
+echo '<strong>Next Cuttoff pay: </strong>' . $nextCutoffPay;
 
 echo '<hr />';
 
-echo '<strong>Cuttoff overtime: </strong>' . $cutoffOvertime . '<br />';
-echo '<strong>Next Cuttoff overtime: </strong>' . $nextCutoffOvertime . '<br />';
+echo '<strong>Cuttoff overtime: </strong>' . $cutoffOvertime . ' | ';
+echo '<strong>Next Cuttoff overtime: </strong>' . $nextCutoffOvertime;
 
 echo '<hr />';
 
-echo '<strong>Your overtime ended: </strong>' . $cutoffOvertime_diff . '<br />';
-echo '<strong>And you should work your balls off until: </strong>' . $nextCutoffOvertime_diff . '<br />';
+echo '<strong>Your overtime ended: </strong>' . $cutoffOvertime_diff . ' | ';
+echo '<strong>And you should work your balls off until: </strong>' . $nextCutoffOvertime_diff;
 
 echo '<hr />';
+
+/* date[2017][10][23][start] */
