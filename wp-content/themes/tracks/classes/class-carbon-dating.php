@@ -129,8 +129,6 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
     </table>
   </form>
 
-<hr />
-
 <script>
   /*
   DO A LITTLE DANCE!
