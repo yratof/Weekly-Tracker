@@ -35,9 +35,9 @@ if ( isset( $parts['query'] ) ) {
 
 // Weekly dates & labels for pagination
 $lastWeek       = Carbon::parse( $query['date'] )->subDays( 7 )->format('Y-m-d');
-$lastWeek_label = Carbon::parse( $query['date'] )->subDays( 7 )->format('W');
+$lastWeek_label = Carbon::parse( $query['date'] )->subDays( 7 )->format('jS M');
 $nextWeek       = Carbon::parse( $query['date'] )->addDays( 7 )->format('Y-m-d');
-$nextWeek_label = Carbon::parse( $query['date'] )->addDays( 7 )->format('W');
+$nextWeek_label = Carbon::parse( $query['date'] )->addDays( 7 )->format('jS M');
 
 // Debug information & general information
 $today                   = Carbon::parse( $query['date'] )->toFormattedDateString();
@@ -62,7 +62,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
 
     <!-- Navigation-->
     <header class="meta">
-      <a href="/?date=<?= $lastWeek; ?>" class="prev">&lt; Week <?= $lastWeek_label ?></a>
+      <a href="/?date=<?= $lastWeek; ?>" class="prev"><small>Last week</small><?= $lastWeek_label ?></a>
       <strong class="week">
         <?= Carbon::parse( $query['date'] )->startOfWeek()->format('jS F Y') . '—' . Carbon::parse( $query['date'] )->endOfWeek()->format('jS F Y') ?>
         <small>
@@ -73,7 +73,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
           ?>
         </small>
       </strong>
-      <a href="/?date=<?= $nextWeek ?>" class="next">Week <?= $nextWeek_label ?> &gt;</a>
+      <a href="/?date=<?= $nextWeek ?>" class="next"><small>Next week</small><?= $nextWeek_label ?></a>
     </header>
 
     <table>
@@ -114,7 +114,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
             // Loop through the days of the week for cells
             foreach ( $weekdays as $weekday ) { ?>
               <td>
-                <input name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
+                <input placeholder="00:00" name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
               </td>
             <?php
             // Increment the addDays function
@@ -150,33 +150,30 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
       if ( today == $(this).data( 'date' ) ) {
         $( this ).addClass( 'today' );
         $( this ).attr( 'data-notice', 'Today' );
-        $( this ).css( 'color', '#4caf50' );
       }
 
       // If PAY CUTTOFF is shown
       if ( pay_cutoff == $(this).data( 'date' ) ) {
         $( this ).addClass( 'payday' );
         $( this ).attr( 'data-notice', 'Payday' );
-        $( this ).css( 'color', 'blue' );
       }
 
       // If OVERTIME CUTTOFF is shown
       if ( over_cutoff == $(this).data( 'date' ) ) {
         $( this ).addClass( 'overtime' );
         $( this ).attr( 'data-notice', 'Overtime Paid' );
-        $( this ).css( 'color', 'red' );
       }
 
       // Last friday, regardless
       if ( lastfriday == $(this).data( 'date' ) ) {
         $( this ).addClass( 'lastfriday' );
         $( this ).attr( 'data-notice', 'Last Friday' );
-        $( this ).css( 'color', 'red' );
       }
     });
   } );
 </script>
 
+<div id="debug">
 <?php
 
 // What is 'Now'
@@ -206,3 +203,5 @@ echo '<strong>And you should work your balls off until: </strong>' . $nextCutoff
 echo '<hr />';
 
 /* date[2017][10][23][start] */
+?>
+</div>
