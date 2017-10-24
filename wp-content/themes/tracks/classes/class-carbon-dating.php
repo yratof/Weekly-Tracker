@@ -109,16 +109,12 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
           <tr class="<?= $state; ?>">
             <th><?= $state; ?></th>
             <?php
-            // Set day 1 as 0 days added
-            $d = 0;
             // Loop through the days of the week for cells
-            foreach ( $weekdays as $weekday ) { ?>
+            foreach ( $weekdays as $key => $weekday ) { ?>
               <td>
-                <input placeholder="00:00" name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
+                <input placeholder="00:00" name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
               </td>
             <?php
-            // Increment the addDays function
-            $d++;
             } ?>
           </tr>
         <?php
