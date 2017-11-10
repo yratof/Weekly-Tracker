@@ -7,18 +7,13 @@ class track_function {
   static function setup() {
     add_action( 'wp_enqueue_scripts', __CLASS__ . '::scripts', 10 );
 
-    // Show us what the form posts
-    if ( $_POST ) {
-      print_r( '<pre>' );
-      print_r( $_POST );
-      print_r( '</pre>' );
-      exit;
-    }
+    // Load meta data saving class
+    require_once( 'classes/class-meta-data.php' );
   }
 
   static function scripts() {
     wp_register_style( 'styles', self::scry( '/style.css' ), '', '', false );
-    wp_enqueue_style( 'styles') ;
+    wp_enqueue_style( 'styles' );
 
     // Register scripts
     wp_register_script( 'prefix', self::scry( '/assets/prefix.js' ), [ 'jquery' ], '', true );
