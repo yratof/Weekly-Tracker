@@ -112,7 +112,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
             // Loop through the days of the week for cells
             foreach ( $weekdays as $key => $weekday ) { ?>
               <td>
-                <input placeholder="00:00" name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
+                <input value="<?= meta_data::get_day_data( Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>" tabindex="<?= $key + 1 ?>" placeholder="00:00" name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
               </td>
             <?php
             } ?>
@@ -136,6 +136,10 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
     var pay_cutoff  = '<?php echo $cutoffPay; ?>';
     var over_cutoff = '<?php echo $cutoffOvertime ?>';
     // console.log( 'Today is ' + today );
+
+    // Remove the tabinxed and make these fields read-only
+    $( 'tr.total input' ).attr( 'tabindex', '', 'readonly', 'readonly' )
+    $( 'tr.overtime input' ).attr( 'tabindex', '', 'readonly', 'readonly' )
 
     // Loop the days
     $( 'th.day' ).each( function() {

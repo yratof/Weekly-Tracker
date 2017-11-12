@@ -64,6 +64,18 @@ class meta_data {
   static function user() {
     return get_current_user_id();
   }
+
+  // Get the field data from the day
+  static function get_day_data( $date, $field ) {
+    if ( ! $date ) { return ''; }
+    if ( ! $field ) { return ''; }
+    $post = get_page_by_title( "$date", OBJECT, 'post' );
+    if ( ! $post ) {
+      return '';
+    }
+    $state_meta_name = 'usr_' . self::user() . '_log_' . $field;
+    return get_post_meta( $post->ID, $state_meta_name, true );
+  }
 }
 
 meta_data::setup();
