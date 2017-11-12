@@ -1,7 +1,8 @@
 jQuery( document ).ready( function($) {
   $( 'input:not([type="submit"]):not([readonly])' ).timepicker({
-    'scrollDefault': '7.30',
-    'step' : 15
+    timeFormat    : 'H:i',
+    scrollDefault : '7.30',
+    step          : 15
   });
 
 
