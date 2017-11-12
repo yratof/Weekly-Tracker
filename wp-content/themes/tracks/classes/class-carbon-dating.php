@@ -111,14 +111,9 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
             <?php
             // Loop through the days of the week for cells
             foreach ( $weekdays as $key => $weekday ) {
-              if ( 'total' == $state || 'overtime' == $state ) {
-                $type = 'type="text"';
-              } else {
-                $type = 'type="time" step="900"';
-              }
               ?>
               <td>
-                <input <?= $type ?>
+                <input type="text"
                   value="<?= meta_data::get_day_data( Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>"
                   tabindex="<?= $key + 1 ?>"
                   placeholder="00:00"

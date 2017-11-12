@@ -4,6 +4,7 @@ class meta_data {
 
   // Load the meta
   static function setup() {
+
     add_action( 'after_setup_theme', __CLASS__ . '::capture', 100 );
     // Bring back our meta fields when ACF is installed
     add_filter('acf/settings/remove_wp_meta_box', '__return_false');

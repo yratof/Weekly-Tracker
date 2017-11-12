@@ -22,7 +22,3 @@ $current_user    = wp_get_current_user(); ?>
   <strong><?php echo date( 'l jS F Y', current_time( 'timestamp', 1 ) ); ?></strong>
   <span><?php echo $current_user->display_name; ?> — <a class="logout" href="<?php echo wp_logout_url(); ?>">Logout</a></span>
 </header>
-
-<?php
-  // Carbon dating everything with the project
-  require_once( 'classes/class-carbon-dating.php' );
