@@ -143,8 +143,11 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
     // console.log( 'Today is ' + today );
 
     // Remove the tabinxed and make these fields read-only
-    $( 'tr.total input' ).attr( 'tabindex', '', 'readonly', 'readonly' )
-    $( 'tr.overtime input' ).attr( 'tabindex', '', 'readonly', 'readonly' )
+    $( 'tr.total input' ).attr( 'tabindex', '' );
+    $( 'tr.total input' ).attr( 'readonly', 'readonly' );
+
+    $( 'tr.overtime input' ).attr( 'tabindex', '' );
+    $( 'tr.overtime input' ).attr( 'readonly', 'readonly' );
 
     // Loop the days
     $( 'th.day' ).each( function() {

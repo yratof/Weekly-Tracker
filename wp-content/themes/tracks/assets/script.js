@@ -33,13 +33,14 @@ jQuery( document ).ready( function($) {
         minutes = "0" + minutes;
       }
       // If worked over 9 hours...
-      if ( hours >= 9 ) {
+      if ( 'friday' != day_name && hours >= 9 ) {
         var ohours = Math.floor( result / 60  ) - 9;
         if ( (ohours + "").length == 1 ) {
           ohours = "0" + ohours;
           overtime_elem.val( ohours+":"+minutes );
         }
-      } else if ( 'friday' === day_name ) {
+      } else if ( 'friday' === day_name && hours >= 5 ) {
+        // console.log( 'Friday triggered' );
         // If it's Friday, we only work until 12.30
         var ohours = Math.floor( result / 60  ) - 5;
         if ( (ohours + "").length == 1 ) {
