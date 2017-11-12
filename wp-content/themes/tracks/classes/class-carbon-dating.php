@@ -44,8 +44,10 @@ $today                   = Carbon::parse( $query['date'] )->toFormattedDateStrin
 $start                   = Carbon::parse( $query['date'] )->startOfWeek()->toFormattedDateString();
 $end                     = Carbon::parse( $query['date'] )->endOfWeek()->toFormattedDateString();
 $lastFriday              = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->toFormattedDateString();
+
 $cutoffPay               = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
 $nextCutoffPay           = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+
 $cutoffOvertime          = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
 $nextCutoffOvertime      = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
 $cutoffOvertime_diff     = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
@@ -107,21 +109,24 @@ $totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query[
 
         <tr class="total-this-week">
           <td colspan="7">
-              <span><strong>Total hours worked this week:</strong> <?= $totalHoursThisWeek; ?></span>
+              <span><strong>Total hours worked this week:</strong> <?= $totalHoursThisWeek; ?></span><br />
               <span><strong>Total overtime worked this week:</strong> <?= $totalOvertimeThisWeek; ?></span>
           </td>
         </tr>
 
         <tr class="total-this-period">
           <td colspan="7">
-              <span><strong>Total hours worked month ending <?= Carbon::parse( $query['date'] )->startOfWeek()->format('F') ?>:</strong> <?= $totalHoursThisPeriod; ?></span>
-              <span><strong>Total overtime worked month ending <?= Carbon::parse( $query['date'] )->startOfWeek()->format('F') ?>:</strong> <?= $totalOvertimeThisPeriod; ?></span>
+              <span><strong>Total hours worked month ending:</strong> <?= $totalHoursThisPeriod; ?></span><br />
+              <span><strong>Total overtime worked month ending:</strong> <?= $totalOvertimeThisPeriod; ?></span>
           </td>
         </tr>
 
         <tr>
           <!-- Buttons that help do things-->
-          <th colspan="4"><a class="view-all" href="#view">View month</a><a class="view-all" href="#print">Print month</a></th>
+          <th colspan="4">
+            <a class="view-all" href="/view?to=<?= Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>&from=<?= Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>">View month</a>
+            <a class="view-all" href="/print?to=<?= Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>&from=<?= Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>">Print month</a>
+          </th>
           <th class="summary" colspan="4">
             <input class="view-all" type="submit" value="Save"/>
           </th>

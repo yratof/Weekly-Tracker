@@ -4,7 +4,7 @@
 class calculations {
 
   // Get the totals for this week...
-  static function total_this_week(  $start,  $end, $field ) {
+  static function total_this_week( $start,  $end, $field ) {
     if ( ( ! $start ) || ( ! $end ) ) { return ; } // Nothing
 
     // $weekly_hours = [];
