@@ -15,6 +15,8 @@ jQuery( document ).ready( function($) {
     var finish_elem   = $( 'tr.finish td:eq('+ i +') input' );
     var total_elem    = $( 'tr.total td:eq('+ i +') input' );
     var overtime_elem = $( 'tr.overtime td:eq('+ i +') input' );
+    var day_name      = $( 'tr.start td:eq('+ i +')' ).data( 'day' );
+
     var calc_diffs    = function() {
       var start  = start_elem.timepicker( 'getTime' );
       var finish = finish_elem.timepicker( 'getTime' );
@@ -33,6 +35,13 @@ jQuery( document ).ready( function($) {
       // If worked over 9 hours...
       if ( hours >= 9 ) {
         var ohours = Math.floor( result / 60  ) - 9;
+        if ( (ohours + "").length == 1 ) {
+          ohours = "0" + ohours;
+          overtime_elem.val( ohours+":"+minutes );
+        }
+      } else if ( 'friday' === day_name ) {
+        // If it's Friday, we only work until 12.30
+        var ohours = Math.floor( result / 60  ) - 5;
         if ( (ohours + "").length == 1 ) {
           ohours = "0" + ohours;
           overtime_elem.val( ohours+":"+minutes );
@@ -57,5 +66,7 @@ jQuery( document ).ready( function($) {
     });
     console.log( hours );
   });
+
+
 
 });

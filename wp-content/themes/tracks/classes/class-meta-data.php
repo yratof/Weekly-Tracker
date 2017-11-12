@@ -31,7 +31,6 @@ class meta_data {
           self::capture_day( $year, $month, $day, $data );
         }
       }
-      # code...
     }
   }
 
@@ -54,6 +53,7 @@ class meta_data {
 
     // Prefix fields with user_IDs
     $prefix = 'usr_' . self::user() . '_log';
+    // Update the four fields
     update_post_meta( $post->ID, $prefix . '_start', $data['start'] );
     update_post_meta( $post->ID, $prefix . '_finish', $data['finish'] );
     update_post_meta( $post->ID, $prefix . '_total', $data['total'] );
