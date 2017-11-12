@@ -3,7 +3,8 @@ jQuery( document ).ready( function($) {
     timeFormat    : 'H:i', // 14:15
     scrollDefault : '7.30', // Defualt time
     step          : 15, // 15 Minute intervals
-    disableTouchKeyboard : true // No keyboards
+    disableTouchKeyboard : true, // No keyboards
+    stopScrollPropagation : true
   });
 
 
