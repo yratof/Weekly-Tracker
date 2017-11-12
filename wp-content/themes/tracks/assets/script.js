@@ -1,10 +1,11 @@
 jQuery( document ).ready( function($) {
+
+  // Disable timepicker for mobile devices
   $( 'input:not([type="submit"]):not([readonly])' ).timepicker({
     timeFormat    : 'H:i', // 14:15
     scrollDefault : '7.30', // Defualt time
     step          : 15, // 15 Minute intervals
-    disableTouchKeyboard : true, // No keyboards
-    stopScrollPropagation : true
+    showOn        : null
   });
 
 
