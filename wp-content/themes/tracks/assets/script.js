@@ -47,6 +47,14 @@ jQuery( document ).ready( function($) {
           ohours = "0" + ohours;
           overtime_elem.val( ohours+":"+minutes );
         }
+      } else if ( 'saturday' === day_name || 'saturday' === day_name ) {
+        // All weekends are overtime
+        // console.log( 'Weekend triggered' );
+        var ohours = Math.floor( result / 60  );
+        if ( (ohours + "").length == 1 ) {
+          ohours = "0" + ohours;
+          overtime_elem.val( ohours+":"+minutes );
+        }
       } else {
         overtime_elem.val( "00:00" );
       }
@@ -67,7 +75,5 @@ jQuery( document ).ready( function($) {
     });
     console.log( hours );
   });
-
-
 
 });

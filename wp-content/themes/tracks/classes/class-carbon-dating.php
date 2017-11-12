@@ -112,7 +112,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
             // Loop through the days of the week for cells
             foreach ( $weekdays as $key => $weekday ) {
               ?>
-              <td data-day="<?= strtolower( $weekday ); ?>">
+              <td data-count="day-<?= $key + 1; ?>" data-day="<?= strtolower( $weekday ); ?>">
                 <input type="text"
                   value="<?= meta_data::get_day_data( Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>"
                   tabindex="<?= $key + 1 ?>"
@@ -161,22 +161,23 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
       // If PAY CUTTOFF is shown
       if ( pay_cutoff == $(this).data( 'date' ) ) {
         $( this ).addClass( 'payday' );
-        $( this ).attr( 'data-notice', 'Payday' );
+        $( this ).attr( 'data-notice', 'Pay cut-off' );
       }
 
       // If OVERTIME CUTTOFF is shown
       if ( over_cutoff == $(this).data( 'date' ) ) {
         $( this ).addClass( 'overtime' );
-        $( this ).attr( 'data-notice', 'Overtime Paid' );
+        $( this ).attr( 'data-notice', 'Overtime cut-off' );
       }
 
       // Last friday, regardless
       if ( lastfriday == $(this).data( 'date' ) ) {
         $( this ).addClass( 'lastfriday' );
-        $( this ).attr( 'data-notice', 'Last Friday' );
+        $( this ).attr( 'data-notice', 'Payday' );
       }
     });
   } );
+
 </script>
 
 <div id="debug">
