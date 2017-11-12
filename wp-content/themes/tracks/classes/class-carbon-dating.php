@@ -112,7 +112,11 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
             // Loop through the days of the week for cells
             foreach ( $weekdays as $key => $weekday ) { ?>
               <td>
-                <input value="<?= meta_data::get_day_data( Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>" tabindex="<?= $key + 1 ?>" placeholder="00:00" name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
+                <input type="time"
+                  value="<?= meta_data::get_day_data( Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>"
+                  tabindex="<?= $key + 1 ?>"
+                  placeholder="00:00"
+                  name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
               </td>
             <?php
             } ?>

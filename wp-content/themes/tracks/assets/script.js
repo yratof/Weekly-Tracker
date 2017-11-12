@@ -1,8 +1,9 @@
 jQuery( document ).ready( function($) {
   $( 'input:not([type="submit"]):not([readonly])' ).timepicker({
-    timeFormat    : 'H:i',
-    scrollDefault : '7.30',
-    step          : 15
+    timeFormat    : 'H:i', // 14:15
+    scrollDefault : '7.30', // Defualt time
+    step          : 15, // 15 Minute intervals
+    disableTouchKeyboard : true // No keyboards
   });
 
 
