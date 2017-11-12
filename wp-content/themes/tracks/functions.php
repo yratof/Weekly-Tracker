@@ -9,6 +9,9 @@ class track_function {
 
     // Load meta data saving class
     require_once( 'classes/class-meta-data.php' );
+
+    // Do the math for from-to dates
+    require_once( 'classes/class-calculations.php' );
   }
 
   static function scripts() {

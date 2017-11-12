@@ -58,6 +58,20 @@ class meta_data {
     update_post_meta( $post->ID, $prefix . '_finish', $data['finish'] );
     update_post_meta( $post->ID, $prefix . '_total', $data['total'] );
     update_post_meta( $post->ID, $prefix . '_overtime', $data['overtime'] );
+
+    // Convert to seconds for the math adding at a later date... Might waste time
+    update_post_meta( $post->ID, $prefix . '_start_microtime', self::seconds( $data['start'] ) );
+    update_post_meta( $post->ID, $prefix . '_finish_microtime', self::seconds( $data['finish'] ) );
+    update_post_meta( $post->ID, $prefix . '_total_microtime', self::seconds( $data['total'] ) );
+    update_post_meta( $post->ID, $prefix . '_overtime_microtime', self::seconds( $data['overtime'] ) );
+  }
+
+  // Convert a HH:i into microtime
+  static function seconds( $time ) {
+    if ( ! $time ) { return '0'; } // No seconds at all
+    sscanf( $time, "%d:%d", $hours, $minutes );
+    $seconds = $hours * 3600 + $minutes * 60;
+    return $seconds;
   }
 
   // Return the Current user ID,
@@ -67,7 +81,7 @@ class meta_data {
   }
 
   // Get the field data from the day
-  static function get_day_data( $date, $field ) {
+  static function get_day_data( $date, $field, $seconds = false ) {
     if ( ! $date ) { return ''; }
     if ( ! $field ) { return ''; }
     $post = get_page_by_title( "$date", OBJECT, 'post' );
@@ -75,6 +89,10 @@ class meta_data {
       return '';
     }
     $state_meta_name = 'usr_' . self::user() . '_log_' . $field;
+    // If we need the seconds version, add a true flag to the end of the function
+    if ( true === $seconds ) {
+      $state_meta_name = 'usr_' . self::user() . '_log_' . $field . '_microtime';
+    }
     return get_post_meta( $post->ID, $state_meta_name, true );
   }
 }

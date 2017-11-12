@@ -34,10 +34,10 @@ if ( isset( $parts['query'] ) ) {
 }
 
 // Weekly dates & labels for pagination
-$lastWeek       = Carbon::parse( $query['date'] )->subDays( 7 )->format('Y-m-d');
-$lastWeek_label = Carbon::parse( $query['date'] )->subDays( 7 )->format('jS M');
-$nextWeek       = Carbon::parse( $query['date'] )->addDays( 7 )->format('Y-m-d');
-$nextWeek_label = Carbon::parse( $query['date'] )->addDays( 7 )->format('jS M');
+$lastWeek                = Carbon::parse( $query['date'] )->subDays( 7 )->format('Y-m-d');
+$lastWeek_label          = Carbon::parse( $query['date'] )->subDays( 7 )->format('jS M');
+$nextWeek                = Carbon::parse( $query['date'] )->addDays( 7 )->format('Y-m-d');
+$nextWeek_label          = Carbon::parse( $query['date'] )->addDays( 7 )->format('jS M');
 
 // Debug information & general information
 $today                   = Carbon::parse( $query['date'] )->toFormattedDateString();
@@ -52,10 +52,20 @@ $cutoffOvertime_diff     = Carbon::parse( $query['date'] )->lastOfMonth( Carbon:
 $nextCutoffOvertime_diff = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
 
 /* Weekdays */
-$weekdays = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+$weekdays                = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
 
 /* States ( Start, Finish etc ) */
-$states = [ 'start', 'finish', 'total', 'overtime' ];
+$states                  = [ 'start', 'finish', 'total', 'overtime' ];
+
+// Working out totals
+
+$totalHoursThisWeek      = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'total' );
+$totalOvertimeThisWeek   = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'overtime' );
+
+$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
+$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
+
+
 ?>
 
 <form method="POST" class="track">
@@ -64,7 +74,7 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
     <header class="meta">
       <a href="/?date=<?= $lastWeek; ?>" class="prev"><small>Last week</small><?= $lastWeek_label ?></a>
       <strong class="week">
-        <?= Carbon::parse( $query['date'] )->startOfWeek()->format('jS F Y') . '—' . Carbon::parse( $query['date'] )->endOfWeek()->format('jS F Y') ?>
+        <span><?= Carbon::parse( $query['date'] )->startOfWeek()->format('jS F Y') . '—' . Carbon::parse( $query['date'] )->endOfWeek()->format('jS F Y') ?></span>
         <small>
           <?php
           echo 'Pay day: ' . $lastFriday . ' – ';
@@ -94,6 +104,21 @@ $states = [ 'start', 'finish', 'total', 'overtime' ];
         </tr>
       </thead>
       <tfoot>
+
+        <tr class="total-this-week">
+          <td colspan="7">
+              <span><strong>Total hours worked this week:</strong> <?= $totalHoursThisWeek; ?></span>
+              <span><strong>Total overtime worked this week:</strong> <?= $totalOvertimeThisWeek; ?></span>
+          </td>
+        </tr>
+
+        <tr class="total-this-period">
+          <td colspan="7">
+              <span><strong>Total hours worked month ending <?= Carbon::parse( $query['date'] )->startOfWeek()->format('F') ?>:</strong> <?= $totalHoursThisPeriod; ?></span>
+              <span><strong>Total overtime worked month ending <?= Carbon::parse( $query['date'] )->startOfWeek()->format('F') ?>:</strong> <?= $totalOvertimeThisPeriod; ?></span>
+          </td>
+        </tr>
+
         <tr>
           <!-- Buttons that help do things-->
           <th colspan="4"><a class="view-all" href="#view">View month</a><a class="view-all" href="#print">Print month</a></th>
