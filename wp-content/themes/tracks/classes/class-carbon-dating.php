@@ -180,7 +180,7 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
   jQuery( function( $ ){
     var today       = '<?php echo Carbon::today()->toFormattedDateString(); ?>';
     var lastfriday  = '<?php echo $lastFriday ?>';
-    var pay_cutoff  = '<?php echo $cutoffPay; ?>';
+    var pay_cutoff  = '<?php echo $nextCutoffPay; ?>';
     var over_cutoff = '<?php echo $cutoffOvertime ?>';
     // console.log( 'Today is ' + today );
 
