@@ -47,6 +47,25 @@ $lastFriday              = Carbon::parse( $query['date'] )->lastOfMonth( Carbon:
 
 $cutoffPay               = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
 $nextCutoffPay           = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+$previousCutoffPay       = Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+
+// Working out totals
+
+$totalHoursThisWeek      = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'total' );
+$totalOvertimeThisWeek   = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'overtime' );
+
+$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
+$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
+
+// If we've gone past the month, but not the date of the cut off, lets just take it back a month
+if ( Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) < $query['date'] && Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) > $query['date'] ) {
+  $cutoffPay             = Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+  $nextCutoffPay         = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+
+  $totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
+  $totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
+
+}
 
 $cutoffOvertime          = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
 $nextCutoffOvertime      = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
@@ -59,13 +78,6 @@ $weekdays                = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frid
 /* States ( Start, Finish etc ) */
 $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 
-// Working out totals
-
-$totalHoursThisWeek      = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'total' );
-$totalOvertimeThisWeek   = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'overtime' );
-
-$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
-$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
 
 
 ?>

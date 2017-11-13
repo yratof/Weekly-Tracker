@@ -12,7 +12,7 @@ class calculations {
 
     for ( $date = $start; $date->lte($end); $date->addDay() ) {
       // $weekly_hours[] = meta_data::get_day_data( $date->format('Y-m-d'), $field ); // Make array of hours
-      $total_hours    += meta_data::get_day_data( $date->format('Y-m-d'), $field, true ); // Add seconds together
+      $total_hours += meta_data::get_day_data( $date->format('Y-m-d'), $field, true ); // Add seconds together
     }
 
     // Put the seconds into hours and minutes
