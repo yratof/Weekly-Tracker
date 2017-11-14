@@ -110,7 +110,7 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 <form method="POST" class="track">
     <!-- Navigation-->
     <header class="meta">
-      <a href="<?= add_query_arg( 'date', $lastWeek, get_permalink() ); ?>" class="prev"><small><?= __( 'Last week', 'tracks' ); ?></small><?= $lastWeek_label ?></a>
+      <a href="<?= add_query_arg( 'date', $lastWeek, '/tracking' ); ?>" class="prev"><small><?= __( 'Last week', 'tracks' ); ?></small><?= $lastWeek_label ?></a>
       <strong class="week">
         <span><?= Carbon::parse( $current_week )->startOfWeek()->format('jS F Y') . ' — <br>' . Carbon::parse( $current_week )->endOfWeek()->format('jS F Y') ?></span>
         <small>
@@ -131,7 +131,7 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
           ?>
         </small>
       </strong>
-      <a href="<?= add_query_arg( 'date', $nextWeek, get_permalink() ); ?>" class="next"><small><?= __( 'Next week', 'tracks' ); ?></small><?= $nextWeek_label ?></a>
+      <a href="<?= add_query_arg( 'date', $nextWeek, '/tracking' ); ?>" class="next"><small><?= __( 'Next week', 'tracks' ); ?></small><?= $nextWeek_label ?></a>
     </header>
 
     <table>
