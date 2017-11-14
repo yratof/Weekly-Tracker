@@ -33,8 +33,8 @@ jQuery( document ).ready( function($) {
         minutes = "0" + minutes;
       }
       // If worked over 9 hours...
-      if ( 'friday' != day_name && hours >= 9 ) {
-        var ohours = Math.floor( result / 60  ) - 9;
+      if ( 'friday' != day_name && hours >= 8.5 ) { // 9 - 0.5 for lunch
+        var ohours = Math.floor( result / 60  ) - 8.5; // 9 - 0.5 for lunch
         if ( (ohours + "").length == 1 ) {
           ohours = "0" + ohours;
           overtime_elem.val( ohours+":"+minutes );
