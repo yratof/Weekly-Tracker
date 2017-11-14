@@ -58,7 +58,11 @@ class setup {
 
   // Force login page
   static function force_login_form() {
-    if ( ! is_user_logged_in() && ! is_admin() ) {
+    if ( is_admin() ) {
+      return;
+    }
+
+    if ( ! is_user_logged_in() ) {
       auth_redirect();
     }
   }
