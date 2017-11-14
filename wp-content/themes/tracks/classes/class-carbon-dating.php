@@ -27,50 +27,75 @@ $parts   = parse_url( $the_url );
 if ( isset( $parts['query'] ) ) {
   parse_str( $parts['query'], $query );
   // A quick reminder of what the day is:
-  echo '<script>console.log( "' . $query['date'] . '" );</script>';
+  echo '<script>console.log( "Viewing the date: ' . $query['date'] . '" );</script>';
 } else {
   // die ( 'We need a date in the url' );
   $query['date'] = Carbon::today()->startOfWeek()->toFormattedDateString();
 }
 
+// Get the query string date
+$current_week = $query['date'];
+
+// Double check there's a date before going
+// further, so we don't show any errors to users
+$date_format = '^\d{4}-\d{2}-\d{2}^';
+$url_check   = preg_match( $date_format, $query['date'] );
+if ( 0 == $url_check ) {
+  // When the date is wrong, or doesn't make sense. Log it so we refer back to that date
+  // then set the date to this current week so stop anything going wrong.
+  error_log( 'URL happened to contain a wrong date. Autocorrected it to current date. ', 0 );
+  $current_week = Carbon::today()->startOfWeek()->toFormattedDateString();
+}
+
+
 // Weekly dates & labels for pagination
-$lastWeek                = Carbon::parse( $query['date'] )->subDays( 7 )->format('Y-m-d');
-$lastWeek_label          = Carbon::parse( $query['date'] )->subDays( 7 )->format('jS M');
-$nextWeek                = Carbon::parse( $query['date'] )->addDays( 7 )->format('Y-m-d');
-$nextWeek_label          = Carbon::parse( $query['date'] )->addDays( 7 )->format('jS M');
+$lastWeek                = Carbon::parse( $current_week )->subDays( 7 )->format('Y-m-d');
+$lastWeek_label          = Carbon::parse( $current_week )->subDays( 7 )->format('jS M');
+$nextWeek                = Carbon::parse( $current_week )->addDays( 7 )->format('Y-m-d');
+$nextWeek_label          = Carbon::parse( $current_week )->addDays( 7 )->format('jS M');
 
 // Debug information & general information
-$today                   = Carbon::parse( $query['date'] )->toFormattedDateString();
-$start                   = Carbon::parse( $query['date'] )->startOfWeek()->toFormattedDateString();
-$end                     = Carbon::parse( $query['date'] )->endOfWeek()->toFormattedDateString();
-$lastFriday              = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->toFormattedDateString();
+$today                   = Carbon::parse( $current_week )->toFormattedDateString();
+$start                   = Carbon::parse( $current_week )->startOfWeek()->toFormattedDateString();
+$end                     = Carbon::parse( $current_week )->endOfWeek()->toFormattedDateString();
+$lastFriday              = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->toFormattedDateString();
 
-$cutoffPay               = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
-$nextCutoffPay           = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
-$previousCutoffPay       = Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+// Cutoff times
+$cutoffPay               = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7);
+$nextCutoffPay           = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7);
+
+$cutoffPay_link     = $cutoffPay->format( 'Y-m-d' );
+$cutoffPay          = $cutoffPay->toFormattedDateString();
+
+$nextCutoffPay_link = $nextCutoffPay->format( 'Y-m-d' );
+$nextCutoffPay      = $nextCutoffPay->toFormattedDateString();
 
 // Working out totals
+$totalHoursThisWeek      = calculations::total_this_week( Carbon::parse( $current_week )->startOfWeek(), Carbon::parse( $current_week )->endOfWeek(), 'total' );
+$totalOvertimeThisWeek   = calculations::total_this_week( Carbon::parse( $current_week )->startOfWeek(), Carbon::parse( $current_week )->endOfWeek(), 'overtime' );
 
-$totalHoursThisWeek      = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'total' );
-$totalOvertimeThisWeek   = calculations::total_this_week( Carbon::parse( $query['date'] )->startOfWeek(), Carbon::parse( $query['date'] )->endOfWeek(), 'overtime' );
-
-$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
-$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
+$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
+$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
 
 // If we've gone past the month, but not the date of the cut off, lets just take it back a month
-if ( Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) < $query['date'] && Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) > $query['date'] ) {
-  $cutoffPay             = Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
-  $nextCutoffPay         = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
+if ( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) < $current_week && Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) > $current_week ) {
+  $cutoffPay             = Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7);
+  $nextCutoffPay         = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7);
 
-  $totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
-  $totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $query['date'] )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
+  $cutoffPay_link     = $cutoffPay->format( 'Y-m-d' );
+  $cutoffPay          = $cutoffPay->toFormattedDateString();
+  $nextCutoffPay_link = $nextCutoffPay->format( 'Y-m-d' );
+  $nextCutoffPay      = $nextCutoffPay->toFormattedDateString();
+
+  $totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
+  $totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
 
 }
 
-$cutoffOvertime          = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
-$nextCutoffOvertime      = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
-$cutoffOvertime_diff     = Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
-$nextCutoffOvertime_diff = Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
+$cutoffOvertime          = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+$nextCutoffOvertime      = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+$cutoffOvertime_diff     = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
+$nextCutoffOvertime_diff = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
 
 /* Weekdays */
 $weekdays                = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
@@ -83,21 +108,30 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 ?>
 
 <form method="POST" class="track">
-
     <!-- Navigation-->
     <header class="meta">
-      <a href="/?date=<?= $lastWeek; ?>" class="prev"><small>Last week</small><?= $lastWeek_label ?></a>
+      <a href="<?= add_query_arg( 'date', $lastWeek, get_permalink() ); ?>" class="prev"><small><?= __( 'Last week', 'tracks' ); ?></small><?= $lastWeek_label ?></a>
       <strong class="week">
-        <span><?= Carbon::parse( $query['date'] )->startOfWeek()->format('jS F Y') . '—' . Carbon::parse( $query['date'] )->endOfWeek()->format('jS F Y') ?></span>
+        <span><?= Carbon::parse( $current_week )->startOfWeek()->format('jS F Y') . ' — <br>' . Carbon::parse( $current_week )->endOfWeek()->format('jS F Y') ?></span>
         <small>
           <?php
-          echo 'Pay day: ' . $lastFriday . ' – ';
-          echo 'Pay range: ' . $cutoffPay . ' - ' . $nextCutoffPay . '<br>';
-          echo 'Overtime range: ' . $cutoffOvertime . ' – ' . $nextCutoffOvertime . '</em>';
+
+          // Might not be the best way of doing this...
+          echo sprintf( '<strong>%1$s</strong>: %2$s <br> <strong>%3$s:</strong> %4$s – %5$s <br> <strong>%6$s:</strong> %7$s – %8$s',
+            __( 'Pay day', 'tracks' ),
+            $lastFriday,
+            __( 'Pay period', 'tracks' ),
+            $cutoffPay,
+            $nextCutoffPay,
+            __( 'Overtime period', 'tracks' ),
+            $cutoffOvertime,
+            $nextCutoffOvertime
+          );
+
           ?>
         </small>
       </strong>
-      <a href="/?date=<?= $nextWeek ?>" class="next"><small>Next week</small><?= $nextWeek_label ?></a>
+      <a href="<?= add_query_arg( 'date', $nextWeek, get_permalink() ); ?>" class="next"><small><?= __( 'Next week', 'tracks' ); ?></small><?= $nextWeek_label ?></a>
     </header>
 
     <table>
@@ -109,8 +143,8 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
             $d = 0;
             // Loop through the days of the week to get th cells
             foreach ( $weekdays as $weekday ) { ?>
-              <th data-day="<?= $weekday ?>" data-date="<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?>" class="day"><?= $weekday ?>
-                <small><?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?></small>
+              <th data-day="<?= $weekday ?>" data-date="<?= Carbon::parse( $current_week )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?>" class="day"><?= $weekday ?>
+                <small><?= Carbon::parse( $current_week )->startOfWeek()->addDays( $d )->toFormattedDateString(); ?></small>
               </th>
             <?php
             $d++;
@@ -121,28 +155,29 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 
         <tr class="total-this-week">
           <td colspan="7">
-              <span><strong>Total hours worked this week:</strong> <?= $totalHoursThisWeek; ?></span><br />
-              <span><strong>Total overtime worked this week:</strong> <?= $totalOvertimeThisWeek; ?></span>
+              <span><strong><?= __( 'Week total', 'tracks' ); ?>:</strong> <?= $totalHoursThisWeek; ?></span>
+              <span><strong><?= __( 'Week overtime', 'tracks' ); ?>:</strong> <?= $totalOvertimeThisWeek; ?></span>
           </td>
         </tr>
 
         <tr class="total-this-period">
           <td colspan="7">
-              <span><strong>Total hours worked month ending:</strong> <?= $totalHoursThisPeriod; ?></span><br />
-              <span><strong>Total overtime worked month ending:</strong> <?= $totalOvertimeThisPeriod; ?></span>
+              <span><strong><?= __( 'Month total', 'tracks' ); ?>:</strong> <?= $totalHoursThisPeriod; ?></span>
+              <span><strong><?= __( 'Overtime total', 'tracks' ); ?>:</strong> <?= $totalOvertimeThisPeriod; ?></span>
           </td>
         </tr>
 
         <tr>
           <!-- Buttons that help do things-->
           <th colspan="4">
-            <a class="view-all" href="/view?to=<?= Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>&from=<?= Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>">View month</a>
-            <a class="view-all" href="/print?to=<?= Carbon::parse( $query['date'] )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>&from=<?= Carbon::parse( $query['date'] )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ); ?>">Print month</a>
+            <a class="view-all" href="/view?from=<?= $cutoffPay_link; ?>&to=<?= $nextCutoffPay_link; ?>">View month</a>
+            <a class="view-all" href="/print?from=<?= $cutoffPay_link; ?>&to=<?= $nextCutoffPay_link; ?>">Print month</a>
           </th>
           <th class="summary" colspan="4">
             <input class="view-all" type="submit" value="Save"/>
           </th>
         </tr>
+
       </tfoot>
       <tbody>
         <?php
@@ -156,10 +191,10 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
               ?>
               <td data-count="day-<?= $key + 1; ?>" data-day="<?= strtolower( $weekday ); ?>">
                 <input type="text"
-                  value="<?= meta_data::get_day_data( Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>"
+                  value="<?= meta_data::get_day_data( Carbon::parse( $current_week )->startOfWeek()->addDays( $key )->format('Y-m-d'), $state ) ?>"
                   tabindex="<?= $key + 1 ?>"
                   placeholder="00:00"
-                  name="date<?= Carbon::parse( $query['date'] )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
+                  name="date<?= Carbon::parse( $current_week )->startOfWeek()->addDays( $key )->format('[Y][m][d]') . '[' . $state . ']'; ?>" />
               </td>
             <?php
             } ?>

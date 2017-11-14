@@ -1,3 +1,14 @@
+/*!
+Theme Name: Tracks
+Theme URI: http://eyeversuseye.com/?tracks
+Author: Andrew Smith
+Author URI: http://eyeversuseye.com/
+Description: Track daily hours & see your overtime
+Version: 0.5
+Text Domain: tracks
+Tags: translation-ready
+*/
+
 $today : #4caf50;
 $friday: #f44336;
 $pay   : #3f51b5;
@@ -278,3 +289,10 @@ th.overtime   { color: darken( $over, 10% ); }
     display: block;
   }
 }
+
+
+/**
+ * Imports
+ */
+
+@import 'range';

@@ -5,7 +5,9 @@ class meta_data {
   // Load the meta
   static function setup() {
 
+    // Capture
     add_action( 'after_setup_theme', __CLASS__ . '::capture', 100 );
+
     // Bring back our meta fields when ACF is installed
     add_filter('acf/settings/remove_wp_meta_box', '__return_false');
   }
@@ -16,8 +18,14 @@ class meta_data {
     if ( ! is_user_logged_in() ) {
       return;
     }
+
     // No post, no go.
     if ( empty( $_POST ) ) {
+      return;
+    }
+
+    // No date?! Hell no.
+    if ( ! isset( $_POST['date'] ) ) {
       return;
     }
 

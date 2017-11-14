@@ -16,9 +16,13 @@
 <body <?php body_class(); ?> itemscope="" itemtype="http://schema.org/WebPage">
 
 <?php // Current user
-$current_user    = wp_get_current_user(); ?>
+$current_user    = wp_get_current_user();
 
-<header class="header">
-  <strong><?php echo date( 'l jS F Y', current_time( 'timestamp', 1 ) ); ?></strong>
-  <span><?php echo $current_user->display_name; ?> — <a class="logout" href="<?php echo wp_logout_url(); ?>">Logout</a></span>
-</header>
+if ( is_user_logged_in() ) {?>
+
+  <header class="header">
+    <strong><?php echo date( 'l jS F Y', current_time( 'timestamp', 1 ) ); ?></strong>
+    <span><?php echo $current_user->display_name; ?> — <a class="logout" href="<?php echo wp_logout_url(); ?>">Logout</a></span>
+  </header>
+
+<?php } ?>
