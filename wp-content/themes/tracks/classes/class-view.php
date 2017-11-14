@@ -18,6 +18,7 @@ class view {
       return;
     }
     ?>
+    <a class="view-all" href="/tracking"><?= __( 'Back to tracker', 'tracks' ); ?></a>
     <form method="POST">
       <input id="range" value="">
       <div id="range-container" style="width: 500px"></div>
