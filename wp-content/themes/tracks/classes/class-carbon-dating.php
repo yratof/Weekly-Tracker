@@ -14,7 +14,7 @@
  *
  */
 
-require 'vendor/autoload.php';
+require get_stylesheet_directory() . '/vendor/autoload.php';
 
 use Carbon\Carbon;
 
