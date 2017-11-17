@@ -217,8 +217,8 @@ th.today {
   th.lastfriday::after,
   th.today::after {
     content: var(--clash);
-    right: 1rem;
-    left: auto; }
+    top: auto;
+    bottom: -1rem; }
 
 th.today::before,
 th.today::after {

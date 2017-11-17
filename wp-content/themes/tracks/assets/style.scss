@@ -251,7 +251,8 @@ th.payday,
 th.lastfriday,
 th.today {
   position: relative;
-  &::before {
+  &::before,
+  &::after {
     content: attr( data-notice );
     background-color: red;
     color: white;
@@ -264,9 +265,16 @@ th.today {
     top: -1rem;
     left: 0.5rem;
   }
+
+  &::after {
+    content: var(--clash);
+    right: 1rem;
+    left: auto;
+  }
 }
 
-th.today::before      { background-color: $today; }
+th.today::before,
+th.today::after      { background-color: $today; }
 th.lastfriday::before { background-color: $friday; }
 th.payday::before     { background-color: $pay; }
 th.overtime::before   { background-color: $over; }

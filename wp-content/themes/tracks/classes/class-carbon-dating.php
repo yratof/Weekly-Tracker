@@ -61,39 +61,49 @@ $end                     = Carbon::parse( $current_week )->endOfWeek()->toFormat
 $lastFriday              = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->toFormattedDateString();
 
 // Cutoff times
-$cutoffPay               = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7);
-$nextCutoffPay           = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7);
+$cutoffPay               = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(6);
+$nextCutoffPay           = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(5);
+// Labels for Fridays
+$cutoffPay_friday        = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(6)->toFormattedDateString();
+$nextCutoffPay_friday    = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
 
-$cutoffPay_link     = $cutoffPay->format( 'Y-m-d' );
-$cutoffPay          = $cutoffPay->toFormattedDateString();
+$cutoffPay_link          = $cutoffPay->format( 'Y-m-d' );
+$cutoffPay               = $cutoffPay->toFormattedDateString();
 
-$nextCutoffPay_link = $nextCutoffPay->format( 'Y-m-d' );
-$nextCutoffPay      = $nextCutoffPay->toFormattedDateString();
+$nextCutoffPay_link      = $nextCutoffPay->format( 'Y-m-d' );
+$nextCutoffPay           = $nextCutoffPay->toFormattedDateString();
 
 // Working out totals
 $totalHoursThisWeek      = calculations::total_this_week( Carbon::parse( $current_week )->startOfWeek(), Carbon::parse( $current_week )->endOfWeek(), 'total' );
 $totalOvertimeThisWeek   = calculations::total_this_week( Carbon::parse( $current_week )->startOfWeek(), Carbon::parse( $current_week )->endOfWeek(), 'overtime' );
 
-$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
-$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
+$totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(6), Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(5), 'total' );
+$totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(6), Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(5), 'overtime' );
 
 // If we've gone past the month, but not the date of the cut off, lets just take it back a month
-if ( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) < $current_week && Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' ) > $current_week ) {
-  $cutoffPay             = Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7);
-  $nextCutoffPay         = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7);
+if ( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(6)->format( 'Y-m-d' ) < $current_week && Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(5)->format( 'Y-m-d' ) > $current_week ) {
+  $cutoffPay               = Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(6);
+  $nextCutoffPay           = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(5);
+  // Labels for Fridays
+  $cutoffPay_friday        = Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(6)->toFormattedDateString();
+  $nextCutoffPay_friday    = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7)->toFormattedDateString();
 
-  $cutoffPay_link     = $cutoffPay->format( 'Y-m-d' );
-  $cutoffPay          = $cutoffPay->toFormattedDateString();
-  $nextCutoffPay_link = $nextCutoffPay->format( 'Y-m-d' );
-  $nextCutoffPay      = $nextCutoffPay->toFormattedDateString();
+  $cutoffPay_link       = $cutoffPay->format( 'Y-m-d' );
+  $cutoffPay            = $cutoffPay->toFormattedDateString();
+  $nextCutoffPay_link   = $nextCutoffPay->format( 'Y-m-d' );
+  $nextCutoffPay        = $nextCutoffPay->toFormattedDateString();
 
-  $totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'total' );
-  $totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7), Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(7), 'overtime' );
-
+  $totalHoursThisPeriod    = calculations::total_this_week( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(6), Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(5), 'total' );
+  $totalOvertimeThisPeriod = calculations::total_this_week( Carbon::parse( $current_week )->subMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(6), Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(5), 'overtime' );
 }
 
-$cutoffOvertime          = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
-$nextCutoffOvertime      = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+$cutoffOvertime            = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(12)->toFormattedDateString();
+$nextCutoffOvertime        = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(11)->toFormattedDateString();
+
+$cutoffOvertime_friday     = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+$nextCutoffOvertime_friday = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->toFormattedDateString();
+
+
 $cutoffOvertime_diff     = Carbon::parse( $current_week )->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
 $nextCutoffOvertime_diff = Carbon::parse( $current_week )->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(14)->diffForHumans();
 
@@ -121,11 +131,11 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
             __( 'Pay day', 'tracks' ),
             $lastFriday,
             __( 'Pay period', 'tracks' ),
-            $cutoffPay,
-            $nextCutoffPay,
+            $cutoffPay_friday,
+            $nextCutoffPay_friday,
             __( 'Overtime period', 'tracks' ),
-            $cutoffOvertime,
-            $nextCutoffOvertime
+            $cutoffOvertime_friday,
+            $nextCutoffOvertime_friday
           );
 
           ?>
@@ -213,10 +223,10 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
   This will highlight specific dates to help show wtf is going on
   */
   jQuery( function( $ ){
-    var today       = '<?php echo Carbon::today()->toFormattedDateString(); ?>';
-    var lastfriday  = '<?php echo $lastFriday ?>';
-    var pay_cutoff  = '<?php echo $nextCutoffPay; ?>';
-    var over_cutoff = '<?php echo $cutoffOvertime ?>';
+    var today       = '<?= Carbon::today()->toFormattedDateString(); ?>';
+    var lastfriday  = '<?= $lastFriday ?>';
+    var pay_cutoff  = '<?= $nextCutoffPay_friday; ?>';
+    var over_cutoff = '<?= $cutoffOvertime_friday; ?>';
     // console.log( 'Today is ' + today );
 
     // Remove the tabinxed and make these fields read-only
@@ -252,6 +262,12 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
         $( this ).addClass( 'lastfriday' );
         $( this ).attr( 'data-notice', 'Payday' );
       }
+
+      if ( today == pay_cutoff || today == over_cutoff || today == lastfriday ) {
+        console.log( 'Today ' + today + ' - Pay ' + pay_cutoff + ' - Over ' + over_cutoff );
+        $( '[data-date="' + today + '"]' ).attr( 'style', '--clash: "Today"' );
+      }
+
     });
   } );
 

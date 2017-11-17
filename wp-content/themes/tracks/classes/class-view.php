@@ -55,14 +55,13 @@ class view {
       if ( isset( $query['from'] ) ) {
         $from = $query['from'];
       } else {
-        $from = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' );
+        $from = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->subDays(5)->format( 'Y-m-d' );
       }
       if ( isset( $query['to'] ) ) {
         $to   = $query['to'];
       } else {
-        $to   = Carbon::today()->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' );
+        $to   = Carbon::today()->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(6)->format( 'Y-m-d' );
       }
-
     } else {
       $from = Carbon::today()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' );
       $to   = Carbon::today()->addMonth()->lastOfMonth( Carbon::FRIDAY )->subDays(7)->format( 'Y-m-d' );
