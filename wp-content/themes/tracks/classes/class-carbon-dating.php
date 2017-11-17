@@ -123,14 +123,20 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
       <a href="<?= add_query_arg( 'date', $lastWeek, '/tracking' ); ?>" class="prev"><small><?= __( 'Last week', 'tracks' ); ?></small><?= $lastWeek_label ?></a>
       <div class="week">
         <span>
-          <strong>Start:</strong> <?= Carbon::parse( $current_week )->startOfWeek()->format('jS F Y'); ?><br />
+          <strong>Start:</strong> <?= Carbon::parse( $current_week )->startOfWeek()->format('jS F Y'); ?> —
           <strong>End: </strong><?= Carbon::parse( $current_week )->endOfWeek()->format('jS F Y') ?>
         </span>
+      </div>
+      <a href="<?= add_query_arg( 'date', $nextWeek, '/tracking' ); ?>" class="next"><small><?= __( 'Next week', 'tracks' ); ?></small><?= $nextWeek_label ?></a>
+    </header>
+
+    <aside>
+
         <small>
           <?php
 
           // Might not be the best way of doing this...
-          echo sprintf( '<strong>%1$s</strong>: %2$s <br> <strong>%3$s:</strong> %4$s – %5$s <br> <strong>%6$s:</strong> %7$s – %8$s',
+          echo sprintf( '<span><strong>%1$s</strong>: %2$s</span><span><strong>%3$s:</strong> %4$s – %5$s</span><span><strong>%6$s:</strong> %7$s – %8$s</span>',
             __( 'Pay day', 'tracks' ),
             $lastFriday,
             __( 'Pay period', 'tracks' ),
@@ -143,9 +149,8 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 
           ?>
         </small>
-      </div>
-      <a href="<?= add_query_arg( 'date', $nextWeek, '/tracking' ); ?>" class="next"><small><?= __( 'Next week', 'tracks' ); ?></small><?= $nextWeek_label ?></a>
-    </header>
+
+    </aside>
 
     <table>
       <thead>
@@ -168,15 +173,14 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 
         <tr class="total-this-week">
           <td colspan="7">
+            <div>
               <span><strong><?= __( 'Week total', 'tracks' ); ?>:</strong> <?= $totalHoursThisWeek; ?></span>
               <span><strong><?= __( 'Week overtime', 'tracks' ); ?>:</strong> <?= $totalOvertimeThisWeek; ?></span>
-          </td>
-        </tr>
-
-        <tr class="total-this-period">
-          <td colspan="7">
+            </div>
+            <div>
               <span><strong><?= __( 'Month total', 'tracks' ); ?>:</strong> <?= $totalHoursThisPeriod; ?></span>
               <span><strong><?= __( 'Overtime total', 'tracks' ); ?>:</strong> <?= $totalOvertimeThisPeriod; ?></span>
+            </div>
           </td>
         </tr>
 
