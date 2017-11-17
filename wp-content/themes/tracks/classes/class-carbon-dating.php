@@ -121,8 +121,11 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
     <!-- Navigation-->
     <header class="meta">
       <a href="<?= add_query_arg( 'date', $lastWeek, '/tracking' ); ?>" class="prev"><small><?= __( 'Last week', 'tracks' ); ?></small><?= $lastWeek_label ?></a>
-      <strong class="week">
-        <span><?= Carbon::parse( $current_week )->startOfWeek()->format('jS F Y') . ' — <br>' . Carbon::parse( $current_week )->endOfWeek()->format('jS F Y') ?></span>
+      <div class="week">
+        <span>
+          <strong>Start:</strong> <?= Carbon::parse( $current_week )->startOfWeek()->format('jS F Y'); ?><br />
+          <strong>End: </strong><?= Carbon::parse( $current_week )->endOfWeek()->format('jS F Y') ?>
+        </span>
         <small>
           <?php
 
@@ -140,7 +143,7 @@ $states                  = [ 'start', 'finish', 'total', 'overtime' ];
 
           ?>
         </small>
-      </strong>
+      </div>
       <a href="<?= add_query_arg( 'date', $nextWeek, '/tracking' ); ?>" class="next"><small><?= __( 'Next week', 'tracks' ); ?></small><?= $nextWeek_label ?></a>
     </header>
 

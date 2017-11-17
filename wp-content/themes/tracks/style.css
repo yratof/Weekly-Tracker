@@ -55,14 +55,18 @@ footer.footer {
 
 header.meta {
   margin-bottom: 1rem;
-  padding: 1rem 0;
+  padding: 0;
   border-bottom: 1px solid #eee;
   align-items: center;
   display: grid;
   grid-template-columns: 1fr 6fr 1fr; }
   header.meta .week {
-    font-size: 1.5rem;
-    text-align: center; }
+    font-size: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    text-align: left;
+    padding-left: 1rem;
+    padding-right: 1rem; }
     header.meta .week small {
       font-size: 0.9rem;
       line-height: 1.4;
@@ -78,9 +82,7 @@ header.meta {
     border-radius: 0;
     vertical-align: middle;
     line-height: 1.4;
-    padding: 2rem 0;
-    margin-top: -1rem;
-    margin-bottom: -1rem; }
+    padding: 1rem 0; }
     header.meta a.prev:hover,
     header.meta a.next:hover {
       background-color: #0036cc; }
