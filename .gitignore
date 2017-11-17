@@ -18,6 +18,7 @@
 # Development plugins
 kint-debugger
 /vendor
+vendor
 /xhgui
 
 # Servebolt infrastructure:
