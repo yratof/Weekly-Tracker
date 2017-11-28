@@ -12,6 +12,7 @@ Tags: translation-ready
   box-sizing: border-box; }
 
 body {
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
   background-color: #ffffff;
   font-size: 16px;
   line-height: 1.4;
@@ -306,7 +307,6 @@ th.overtime {
   line-height: 25px;
   padding-left: 10px;
   font-size: 12px;
-  font-family: Arial, sans-serif;
   font-weight: bold;
   cursor: pointer;
   color: #303030;
@@ -322,7 +322,6 @@ th.overtime {
   font-size: 12px;
   line-height: 20px;
   color: #aaa;
-  font-family: Arial, sans-serif;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
   box-sizing: initial; }
 
